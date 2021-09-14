@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/set_name"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_set_name_24"
+        android:title="@string/set_name" />
+
+    <item
+        android:id="@+id/set_color"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_set_color_24"
+        android:title="@string/set_color" />
+</menu>

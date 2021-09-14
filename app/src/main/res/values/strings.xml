@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Chat 2.0</string>
+    <string name="send">Send</string>
+    <string name="message">message</string>
+    <string name="set_name">Set name</string>
+    <string name="edit_your_username">Edit your username</string>
+    <string name="username">Username</string>
+    <string name="set_color">Set color</string>
+    <string name="apply">Apply</string>
+</resources>
