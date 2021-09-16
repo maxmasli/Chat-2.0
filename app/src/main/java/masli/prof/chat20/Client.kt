@@ -22,7 +22,7 @@ class Client(private val chatViewModel: ChatViewModel) {
     private val gson = GsonBuilder().create()
 
     companion object {
-        private const val IP = "46.181.150.92"
+        private const val IP = "127.0.0.1"
         private const val PORT = 8888
     }
 
