@@ -1,8 +1,5 @@
 package masli.prof.chat20
 
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
-import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
@@ -12,23 +9,21 @@ import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import masli.prof.chat20.dialogs.ColorDialogFragment
+import masli.prof.chat20.dialogs.ColorPickerDialogFragment
 import masli.prof.chat20.dialogs.UsernameDialogFragment
+import masli.prof.chat20.dialogs.UsersDialogFragment
 import masli.prof.chat20.models.Arguments
 import masli.prof.chat20.models.Message
 import masli.prof.chat20.viewmodels.ChatViewModel
 
 private const val USERNAME_DIALOG = "username_dialog"
 private const val COLOR_DIALOG = "color_dialog"
+private const val USERS_DIALOG = "users_dialog"
 
 class MainActivity : AppCompatActivity() {
 
     private val chatViewModel: ChatViewModel by lazy {
         ViewModelProvider(this).get(ChatViewModel::class.java)
-    }
-
-    companion object {
-        var uuid: String? = null
     }
 
     private lateinit var chatLinearLayout: LinearLayout
@@ -37,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var chatScrollView: ScrollView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         chatScrollView = findViewById(R.id.chat_sv)
@@ -51,11 +47,12 @@ class MainActivity : AppCompatActivity() {
         })
 
         chatViewModel.lastMessageLiveData.observe(this, { message ->
-            if (message.isInfo) {
-                addInfoMessage(message)
-            } else {
-                addMessage(message)
-            }
+                if (message.isInfo) {
+                    addInfoMessage(message)
+                } else {
+                    addMessage(message)
+                }
+
         })
 
         sendButton.setOnClickListener {
@@ -71,6 +68,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_options, menu)
         return super.onCreateOptionsMenu(menu)
@@ -85,8 +83,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.set_color -> {
-                val cdf = ColorDialogFragment.newInstance(this)
+                val cdf = ColorPickerDialogFragment.newInstance(this)
                 cdf.show(supportFragmentManager, COLOR_DIALOG)
+                return true
+            }
+
+            R.id.get_users -> {
+                val udf = UsersDialogFragment.newInstance(this)
+                udf.show(supportFragmentManager, USERS_DIALOG)
                 return true
             }
         }
@@ -114,6 +118,8 @@ class MainActivity : AppCompatActivity() {
         text.layoutParams = lParams
 
         chatLinearLayout.addView(infoView)
+
+        chatScrollView.scrollDown()
     }
 
     private fun addMessage(_message: Message) {
@@ -134,7 +140,7 @@ class MainActivity : AppCompatActivity() {
         name.text = _message.arguments.name
         message.text = _message.arguments.text
         lParams.bottomMargin = 8
-        if (_message.arguments.uuid == uuid) lParams.gravity = Gravity.END
+        if (_message.arguments.uuid == ChatApplication.getInstance().uuid) lParams.gravity = Gravity.END
         itemView.layoutParams = lParams
         chatLinearLayout.addView(itemView)
 

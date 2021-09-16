@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Чат 2.0</string>
+    <string name="send">Send</string>
+    <string name="message">Сообщение</string>
+    <string name="set_name">Изменить имя</string>
+    <string name="edit_your_username">Измени свое имя</string>
+    <string name="username">Ник</string>
+    <string name="set_color">Изменить цвет</string>
+    <string name="apply">Изменить</string>
+    <string name="get_users">Пользователи</string>
+    <string name="users_list">Список пользователей</string>
+    <string name="circle">●</string>
+</resources>

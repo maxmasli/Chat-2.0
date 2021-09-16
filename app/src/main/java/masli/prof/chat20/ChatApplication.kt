@@ -1,8 +1,13 @@
 package masli.prof.chat20
 
 import android.app.Application
+import masli.prof.chat20.models.User
 
 class ChatApplication : Application() {
+
+    var uuid: String? = null
+
+    val users = mutableListOf<User>()
 
     var red: Int = 0
     var green: Int = 255

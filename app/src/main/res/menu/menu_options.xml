@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/get_users"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_get_users_24"
+        android:title="@string/get_users" />
+
+    <item
         android:id="@+id/set_name"
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_set_name_24"

@@ -11,7 +11,7 @@ import masli.prof.chat20.ChatApplication
 import masli.prof.chat20.MainActivity
 import masli.prof.chat20.R
 
-class ColorDialogFragment(private val activity: MainActivity) : DialogFragment() {
+class ColorPickerDialogFragment(private val activity: MainActivity) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
@@ -30,16 +30,9 @@ class ColorDialogFragment(private val activity: MainActivity) : DialogFragment()
                 override fun onProgressChanged(
                     seekBar: SeekBar?, progress: Int, fromUser: Boolean
                 ) {
-                    ChatApplication.getInstance().apply {
-                        this.red = red.progress
-                        this.green = green.progress
-                        this.blue = blue.progress
-                    }
 
                     background.setBackgroundColor(
-                        Color.rgb(
-                            red.progress, green.progress, blue.progress)
-
+                        Color.rgb(red.progress, green.progress, blue.progress)
                     )
                 }
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -57,7 +50,13 @@ class ColorDialogFragment(private val activity: MainActivity) : DialogFragment()
             blue.setOnSeekBarChangeListener(seekBarListener)
 
             builder.setPositiveButton("Apply") { _, _ ->
-                Color.rgb(red.progress, green.progress, blue.progress)
+
+                ChatApplication.getInstance().apply {
+                    this.red = red.progress
+                    this.green = green.progress
+                    this.blue = blue.progress
+                }
+
                 activity.changeColor(Color.rgb(red.progress, green.progress, blue.progress))
             }
             builder.create()
@@ -65,8 +64,8 @@ class ColorDialogFragment(private val activity: MainActivity) : DialogFragment()
     }
 
     companion object {
-        fun newInstance(activity: MainActivity): ColorDialogFragment {
-            return ColorDialogFragment(activity)
+        fun newInstance(activity: MainActivity): ColorPickerDialogFragment {
+            return ColorPickerDialogFragment(activity)
         }
     }
 }

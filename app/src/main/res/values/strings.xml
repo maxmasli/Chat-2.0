@@ -7,4 +7,7 @@
     <string name="username">Username</string>
     <string name="set_color">Set color</string>
     <string name="apply">Apply</string>
+    <string name="get_users">Get users</string>
+    <string name="users_list">Users list</string>
+    <string name="circle">●</string>
 </resources>
