@@ -55,54 +55,60 @@ class Client(private val chatViewModel: ChatViewModel) {
                         val app = ChatApplication.getInstance()
 
                         for (key in message.arguments.users.keys) {
-                            message.arguments.users[key]?.let { app.users.add(it) }
+                            message.arguments.users[key]?.let { app.users.value!!.add(it) }
                             message.arguments.users[key]?.uuid = key
                         }
 
                         Log.d("TAAAG", "Users: " + app.users.toString())
                     }
                     "server_message" -> {
-                        Thread.sleep(100) //фууу каааал
+                        Thread.sleep(500) //фууу каааал
                         Log.d("TAAAG", message.arguments.text.toString() + " info")
                         message.isInfo = true
                         chatViewModel.inputMessage(message)
                     }
                     "enter" -> {
-                        ChatApplication.getInstance().users.add(
+                        ChatApplication.getInstance().users.value!!.add(
                             User(
                                 uuid = message.arguments.uuid,
                                 name = message.arguments.name,
                                 color = message.arguments.color
                             )
                         )
+
                         Log.d("TAAAG", "new user connected " + ChatApplication.getInstance().users.toString())
                     }
                     "leave" -> {
-                        ChatApplication.getInstance().users.removeIf { user ->
+                        ChatApplication.getInstance().users.value!!.removeIf { user ->
                             user.uuid == message.arguments.uuid
                         }
+
                         Log.d("TAAAG", "user removed " + ChatApplication.getInstance().users.toString())
                     }
                     "change_name" -> {
-                        for (user in ChatApplication.getInstance().users) {
+                        for (user in ChatApplication.getInstance().users.value!!) {
                             if (message.arguments.uuid == user.uuid) {
                                 user.name = message.arguments.name
                                 break
                             }
                         }
+
                     }
                     "change_color" -> {
-                        for (user in ChatApplication.getInstance().users) {
+
+                        for (user in ChatApplication.getInstance().users.value!!) {
                             if (message.arguments.uuid == user.uuid) {
                                 user.color = message.arguments.color
                                 break
                             }
                         }
+
                     }
                     else -> {
                         chatViewModel.inputMessage(message)
                     }
                 }
+                updateUsersLiveData()
             } catch (e: SocketException) {
                 //пользователь закрыл приложение
             }
@@ -128,5 +134,9 @@ class Client(private val chatViewModel: ChatViewModel) {
         outputStream?.close()
         inputStream?.close()
         socket?.close()
+    }
+
+    private fun updateUsersLiveData(){
+        ChatApplication.getInstance().users.postValue(ChatApplication.getInstance().users.value)///////
     }
 }

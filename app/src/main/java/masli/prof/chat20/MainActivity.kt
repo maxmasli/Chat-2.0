@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         messageEditText = findViewById(R.id.message_ed)
         sendButton = findViewById(R.id.send_btn)
 
-        ChatApplication.getInstance()
+        ChatApplication.getInstance().users.value = mutableListOf()
 
         chatViewModel.messageListLiveData.observe(this, { list ->
             addMessages(list)
