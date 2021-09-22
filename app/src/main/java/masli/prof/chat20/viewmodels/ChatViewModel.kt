@@ -1,7 +1,5 @@
 package masli.prof.chat20.viewmodels
 
-import android.util.Log
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -14,9 +12,10 @@ import masli.prof.chat20.models.Message
 
 class ChatViewModel : ViewModel() {
 
-    lateinit var state: Lifecycle.State
     private lateinit var client: Client
     private val messages = mutableListOf<Message>()
+
+    val messageForResponse = MutableLiveData<Message?>()
     val messageListLiveData = MutableLiveData<MutableList<Message>>()
     val lastMessageLiveData = MutableLiveData<Message>()
 
@@ -29,10 +28,13 @@ class ChatViewModel : ViewModel() {
     }
 
     fun inputMessage(message: Message) {
+        if (messageForResponse.value != null) {
+            message.arguments.message = messageForResponse.value
+            messageForResponse.postValue(null)
+        }
         messages.add(message)
         lastMessageLiveData.postValue(message)
 
-        Log.d("TAAAG", message.arguments.text.toString() + " пришло сообщ")
     }
 
     fun outputMessage(message: Message) {
@@ -47,12 +49,12 @@ class ChatViewModel : ViewModel() {
         client.sendMessage(Message(method = "change_color", Arguments(color = color)))
     }
 
-    fun addMessages(messages: MutableList<Message>) {
-        //TODO доделать
+    fun addMessages() {
         messageListLiveData.value = messages
     }
 
-    fun closeServer() {
+    override fun onCleared() {
+        super.onCleared()
         client.close()
     }
 

@@ -9,9 +9,9 @@ import masli.prof.chat20.models.Message
 import masli.prof.chat20.models.User
 import masli.prof.chat20.viewmodels.ChatViewModel
 import java.io.*
-import java.lang.Exception
 import java.net.Socket
 import java.net.SocketException
+import java.util.concurrent.TimeUnit
 
 class Client(private val chatViewModel: ChatViewModel) {
 
@@ -37,20 +37,19 @@ class Client(private val chatViewModel: ChatViewModel) {
             }
 
         } catch (e: IOException) {
-            Log.d("TAAAG", e.message.toString())
         }
 
     }
 
     fun listen() {
-        while (socket?.isConnected == true) {
-            try {
+        try {
+            while (socket?.isConnected == true) {
+
                 val data = inputStream?.readLine()
                 val message = gson.fromJson(data, Message::class.java)
 
                 when (message.method) {
                     "connect" -> {
-                        Log.d("TAAAG", "connecting")
                         ChatApplication.getInstance().uuid = message.arguments.uuid.toString()
                         val app = ChatApplication.getInstance()
 
@@ -59,11 +58,9 @@ class Client(private val chatViewModel: ChatViewModel) {
                             message.arguments.users[key]?.uuid = key
                         }
 
-                        Log.d("TAAAG", "Users: " + app.users.toString())
                     }
                     "server_message" -> {
-                        Thread.sleep(500) //фууу каааал
-                        Log.d("TAAAG", message.arguments.text.toString() + " info")
+                        TimeUnit.MILLISECONDS.sleep(500)
                         message.isInfo = true
                         chatViewModel.inputMessage(message)
                     }
@@ -76,14 +73,12 @@ class Client(private val chatViewModel: ChatViewModel) {
                             )
                         )
 
-                        Log.d("TAAAG", "new user connected " + ChatApplication.getInstance().users.toString())
                     }
                     "leave" -> {
                         ChatApplication.getInstance().users.value!!.removeIf { user ->
                             user.uuid == message.arguments.uuid
                         }
 
-                        Log.d("TAAAG", "user removed " + ChatApplication.getInstance().users.toString())
                     }
                     "change_name" -> {
                         for (user in ChatApplication.getInstance().users.value!!) {
@@ -104,29 +99,28 @@ class Client(private val chatViewModel: ChatViewModel) {
                         }
 
                     }
+
+                    "" -> {
+
+                    }
+
                     else -> {
                         chatViewModel.inputMessage(message)
                     }
                 }
                 updateUsersLiveData()
-            } catch (e: SocketException) {
-                //пользователь закрыл приложение
             }
+        } catch (e: SocketException) {
+            Log.d("TAAAG", "пользователь закрыл приложение")
         }
 
     }
 
     fun sendMessage(message: Message) {
         GlobalScope.launch(Dispatchers.IO) {
-            //try {//я убрал этот трай кеч и все заработало норм)))) вроде как
             val json = gson.toJson(message)
-            Log.d("TAAAG", json)
             outputStream?.write(json)
             outputStream?.flush()
-            //} catch (e: Exception) {
-            //   Log.e("TAAAG", e.message.toString())
-            //}
-
         }
     }
 
@@ -136,7 +130,7 @@ class Client(private val chatViewModel: ChatViewModel) {
         socket?.close()
     }
 
-    private fun updateUsersLiveData(){
+    private fun updateUsersLiveData() {
         ChatApplication.getInstance().users.postValue(ChatApplication.getInstance().users.value)///////
     }
 }

@@ -15,9 +15,7 @@ class ChatApplication : Application() {
     var blue: Int = 15
 
     companion object {
-
         private lateinit var app: ChatApplication
-
         fun getInstance(): ChatApplication {
             return app
         }

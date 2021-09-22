@@ -16,6 +16,48 @@
         app:layout_constraintTop_toTopOf="parent"
         tool:text="denchik" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/response_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="4dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name_tv">
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:background="@drawable/line_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/res_name_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@id/line"
+            app:layout_constraintTop_toTopOf="parent"
+            tool:text="username" />
+
+        <TextView
+            android:id="@+id/res_message_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@id/line"
+            app:layout_constraintTop_toBottomOf="@id/res_name_tv"
+            tool:text="ya loh" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TextView
         android:id="@+id/message_tv"
         android:layout_width="match_parent"
@@ -23,7 +65,7 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name_tv"
-        tool:text="ya loh" />
+        app:layout_constraintTop_toBottomOf="@id/response_message"
+        tool:text="ya jklasdfiasdfjio;asdfjklloh" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

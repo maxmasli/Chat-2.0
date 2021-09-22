@@ -11,4 +11,5 @@
     <string name="get_users">Пользователи</string>
     <string name="users_list">Список пользователей</string>
     <string name="circle">●</string>
+    <string name="response">Ответить</string>
 </resources>

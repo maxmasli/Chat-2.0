@@ -18,12 +18,12 @@ class UsersDialogFragment(private val activity: MainActivity) : DialogFragment()
             val builder = AlertDialog.Builder(it)
             val view = layoutInflater.inflate(R.layout.get_users_dialog, null, false)
 
-            val usersLinLayout= view.findViewById<LinearLayout>(R.id.users_ll)
+            val usersLinearLayout= view.findViewById<LinearLayout>(R.id.users_ll)
 
-            ChatApplication.getInstance().users.observe(this, {list ->
+            ChatApplication.getInstance().users.observe(this, {usersList ->
                 Log.d("TAAAG", "меняется список лошков")
-                usersLinLayout.removeAllViews()
-                for (user in ChatApplication.getInstance().users.value!!) {
+                usersLinearLayout.removeAllViews()
+                for (user in usersList) {
                     val itemView = layoutInflater.inflate(R.layout.user_item, null, false)
                     val name = itemView.findViewById<TextView>(R.id.dialog_name_tv)
                     val circle = itemView.findViewById<TextView>(R.id.dialog_circle)
@@ -38,7 +38,7 @@ class UsersDialogFragment(private val activity: MainActivity) : DialogFragment()
                     )
 
                     itemView.layoutParams = lParams
-                    usersLinLayout.addView(itemView)
+                    usersLinearLayout.addView(itemView)
                 }
             })
 
