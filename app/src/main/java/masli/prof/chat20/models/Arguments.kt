@@ -5,7 +5,7 @@ data class Arguments(
     val uuid: String? = null,
     val text: String? = null,
     val color: Int? = null,
-    var message: Message? = null,
+    var message: ResponseMessage? = null,
     val users: HashMap<String, User> = HashMap()
 ) {
     override fun toString(): String {

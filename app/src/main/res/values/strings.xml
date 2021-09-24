@@ -11,4 +11,5 @@
     <string name="users_list">Users list</string>
     <string name="circle">●</string>
     <string name="response">Response</string>
+    <string name="close_button">close button</string>
 </resources>

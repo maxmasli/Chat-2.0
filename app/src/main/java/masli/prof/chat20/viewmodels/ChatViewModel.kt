@@ -5,19 +5,21 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import masli.prof.chat20.ChatApplication
 import masli.prof.chat20.Client
 import masli.prof.chat20.models.Arguments
-import masli.prof.chat20.models.Message
+import masli.prof.chat20.models.Method
+import masli.prof.chat20.models.ResponseMessage
 
 
 class ChatViewModel : ViewModel() {
 
     private lateinit var client: Client
-    private val messages = mutableListOf<Message>()
+    private val messages = mutableListOf<Method>()
 
-    val messageForResponse = MutableLiveData<Message?>()
-    val messageListLiveData = MutableLiveData<MutableList<Message>>()
-    val lastMessageLiveData = MutableLiveData<Message>()
+    val messageForResponse = MutableLiveData<ResponseMessage?>()
+    val messageListLiveData = MutableLiveData<MutableList<Method>>()
+    val lastMessageLiveData = MutableLiveData<Method>()
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -27,26 +29,26 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    fun inputMessage(message: Message) {
-        if (messageForResponse.value != null) {
-            message.arguments.message = messageForResponse.value
+    fun inputMessage(method: Method) {
+        if (messageForResponse.value != null && ChatApplication.getInstance().uuid == method.arguments.uuid) {
+            method.arguments.message = messageForResponse.value
             messageForResponse.postValue(null)
         }
-        messages.add(message)
-        lastMessageLiveData.postValue(message)
+        messages.add(method)
+        lastMessageLiveData.postValue(method)
 
     }
 
-    fun outputMessage(message: Message) {
-        client.sendMessage(message)
+    fun outputMessage(method: Method) {
+        client.sendMessage(method)
     }
 
     fun changeName(username: String) {
-        client.sendMessage(Message(method = "change_name", Arguments(name = username)))
+        client.sendMessage(Method(method = "change_name", Arguments(name = username)))
     }
 
     fun changeColor(color: Int) {
-        client.sendMessage(Message(method = "change_color", Arguments(color = color)))
+        client.sendMessage(Method(method = "change_color", Arguments(color = color)))
     }
 
     fun addMessages() {

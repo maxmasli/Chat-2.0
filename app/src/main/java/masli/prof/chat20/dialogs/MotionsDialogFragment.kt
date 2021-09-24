@@ -7,9 +7,10 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import masli.prof.chat20.MainActivity
 import masli.prof.chat20.R
-import masli.prof.chat20.models.Message
+import masli.prof.chat20.models.Method
+import masli.prof.chat20.models.ResponseMessage
 
-class MotionsDialogFragment(private val activity: MainActivity, private val message: Message) : DialogFragment() {
+class MotionsDialogFragment(private val activity: MainActivity, private val method: Method) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity.let {
@@ -17,7 +18,7 @@ class MotionsDialogFragment(private val activity: MainActivity, private val mess
             val motionsView = layoutInflater.inflate(R.layout.motions_dialog, null, false)
 
             motionsView.findViewById<TextView>(R.id.dialog_response).setOnClickListener {
-                activity.setMessageForResponse(message)
+                activity.setMessageForResponse(ResponseMessage(name = method.arguments.name, text = method.arguments.text))
                 dismiss()
             }
 
@@ -30,8 +31,8 @@ class MotionsDialogFragment(private val activity: MainActivity, private val mess
     }
 
     companion object {
-        fun newInstance(activity: MainActivity, _message: Message): MotionsDialogFragment {
-            return MotionsDialogFragment(activity, _message)
+        fun newInstance(activity: MainActivity, method: Method): MotionsDialogFragment {
+            return MotionsDialogFragment(activity, method)
         }
     }
 }

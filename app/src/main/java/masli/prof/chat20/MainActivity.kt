@@ -16,7 +16,8 @@ import masli.prof.chat20.dialogs.MotionsDialogFragment
 import masli.prof.chat20.dialogs.UsernameDialogFragment
 import masli.prof.chat20.dialogs.UsersDialogFragment
 import masli.prof.chat20.models.Arguments
-import masli.prof.chat20.models.Message
+import masli.prof.chat20.models.Method
+import masli.prof.chat20.models.ResponseMessage
 import masli.prof.chat20.viewmodels.ChatViewModel
 
 private const val USERNAME_DIALOG = "username_dialog"
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var responseNameTextView: TextView
     private lateinit var responseMessageTextView: TextView
     private lateinit var chatScrollView: ScrollView
+    private lateinit var closeTabButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         responseMessageTab = findViewById(R.id.response_message_tab)
         responseNameTextView = findViewById(R.id.response_name_tv)
         responseMessageTextView = findViewById(R.id.response_message_tv)
+        closeTabButton = findViewById(R.id.close_tab_btn)
 
         ChatApplication.getInstance().users.value = mutableListOf()
 
@@ -66,26 +69,31 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        chatViewModel.messageForResponse.observe(this, {message ->
+        chatViewModel.messageForResponse.observe(this, { message ->
             if (chatViewModel.messageForResponse.value == null) {
                 responseMessageTab.visibility = View.GONE
             } else {
                 responseMessageTab.visibility = View.VISIBLE
-                responseNameTextView.text = message?.arguments?.name
-                responseMessageTextView.text = message?.arguments?.text
+                responseNameTextView.text = message?.name
+                responseMessageTextView.text = message?.text
+                chatScrollView.scrollDown()
             }
         })
 
         sendButton.setOnClickListener {
             if (messageEditText.text.toString().isNotEmpty()) {
                 chatViewModel.outputMessage(
-                    Message(
+                    Method(
                         "message",
-                        Arguments(text = messageEditText.text.toString().trim())
+                        Arguments(text = messageEditText.text.toString().trim(), message = chatViewModel.messageForResponse.value)
                     )
                 )
                 messageEditText.text.clear()
             }
+        }
+
+        closeTabButton.setOnClickListener {
+            chatViewModel.messageForResponse.value = null
         }
     }
 
@@ -131,11 +139,11 @@ class MainActivity : AppCompatActivity() {
         chatViewModel.changeName(username)
     }
 
-    fun setMessageForResponse(message: Message) {
-        chatViewModel.messageForResponse.value = message
+    fun setMessageForResponse(responseMessage: ResponseMessage) {
+        chatViewModel.messageForResponse.value = responseMessage
     }
 
-    private fun addInfoMessage(_message: Message) {
+    private fun addInfoMessage(_method: Method) {
         val infoView = layoutInflater.inflate(R.layout.info_message_item, chatScrollView, false)
         val text = infoView.findViewById<TextView>(R.id.info_tv)
         val lParams = LinearLayout.LayoutParams(
@@ -143,7 +151,7 @@ class MainActivity : AppCompatActivity() {
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
-        text.text = _message.arguments.text
+        text.text = _method.arguments.text
         text.layoutParams = lParams
 
         chatLinearLayout.addView(infoView)
@@ -151,7 +159,7 @@ class MainActivity : AppCompatActivity() {
         chatScrollView.scrollDown()
     }
 
-    private fun addMessage(_message: Message) {
+    private fun addMessage(_method: Method) {
         val itemView = layoutInflater.inflate(R.layout.message_item, chatScrollView, false)
         val name = itemView.findViewById<TextView>(R.id.name_tv)
         val message = itemView.findViewById<TextView>(R.id.message_tv)
@@ -170,29 +178,29 @@ class MainActivity : AppCompatActivity() {
         //   BlendModeColorFilter(_message.arguments.color, BlendMode.SRC_ATOP) }
 
         itemView.setOnClickListener {
-            val mdf = MotionsDialogFragment.newInstance(this, _message)
+            val mdf = MotionsDialogFragment.newInstance(this, _method)
             mdf.show(supportFragmentManager, MOTIONS_DIALOG)
         }
 
-        _message.arguments.color?.let {
+        _method.arguments.color?.let {
             itemView.background.setColorFilter(
                 it,
                 PorterDuff.Mode.MULTIPLY
             )
         }// по возможности переделать
 
-        name.text = _message.arguments.name
+        name.text = _method.arguments.name
 
-        if (_message.arguments.message != null) {
+        if (_method.arguments.message != null) {
             response.visibility = View.VISIBLE
-            responseName.text = _message.arguments.message!!.arguments.name
-            responseMessage.text = _message.arguments.message!!.arguments.text
+            responseName.text = _method.arguments.message!!.name
+            responseMessage.text = _method.arguments.message!!.text
         }
 
-        message.text = _message.arguments.text
+        message.text = _method.arguments.text
 
         lParams.bottomMargin = 8
-        if (_message.arguments.uuid == ChatApplication.getInstance().uuid) lParams.gravity =
+        if (_method.arguments.uuid == ChatApplication.getInstance().uuid) lParams.gravity =
             Gravity.END
         itemView.layoutParams = lParams
         chatLinearLayout.addView(itemView)
@@ -201,10 +209,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun addMessages(messages: MutableList<Message>) {
-        if (messages.isEmpty()) return
+    private fun addMessages(methods: MutableList<Method>) {
+        if (methods.isEmpty()) return
 
-        for (message in messages) {
+        for (message in methods) {
             if (message.isInfo) {
                 addInfoMessage(message)
             } else {

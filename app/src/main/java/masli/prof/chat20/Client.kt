@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import masli.prof.chat20.models.Message
+import masli.prof.chat20.models.Method
 import masli.prof.chat20.models.User
 import masli.prof.chat20.viewmodels.ChatViewModel
 import java.io.*
@@ -46,44 +46,44 @@ class Client(private val chatViewModel: ChatViewModel) {
             while (socket?.isConnected == true) {
 
                 val data = inputStream?.readLine()
-                val message = gson.fromJson(data, Message::class.java)
+                val method = gson.fromJson(data, Method::class.java)
 
-                when (message.method) {
+                when (method.method) {
                     "connect" -> {
-                        ChatApplication.getInstance().uuid = message.arguments.uuid.toString()
+                        ChatApplication.getInstance().uuid = method.arguments.uuid.toString()
                         val app = ChatApplication.getInstance()
 
-                        for (key in message.arguments.users.keys) {
-                            message.arguments.users[key]?.let { app.users.value!!.add(it) }
-                            message.arguments.users[key]?.uuid = key
+                        for (key in method.arguments.users.keys) {
+                            method.arguments.users[key]?.let { app.users.value!!.add(it) }
+                            method.arguments.users[key]?.uuid = key
                         }
 
                     }
                     "server_message" -> {
                         TimeUnit.MILLISECONDS.sleep(500)
-                        message.isInfo = true
-                        chatViewModel.inputMessage(message)
+                        method.isInfo = true
+                        chatViewModel.inputMessage(method)
                     }
                     "enter" -> {
                         ChatApplication.getInstance().users.value!!.add(
                             User(
-                                uuid = message.arguments.uuid,
-                                name = message.arguments.name,
-                                color = message.arguments.color
+                                uuid = method.arguments.uuid,
+                                name = method.arguments.name,
+                                color = method.arguments.color
                             )
                         )
 
                     }
                     "leave" -> {
                         ChatApplication.getInstance().users.value!!.removeIf { user ->
-                            user.uuid == message.arguments.uuid
+                            user.uuid == method.arguments.uuid
                         }
-
                     }
+
                     "change_name" -> {
                         for (user in ChatApplication.getInstance().users.value!!) {
-                            if (message.arguments.uuid == user.uuid) {
-                                user.name = message.arguments.name
+                            if (method.arguments.uuid == user.uuid) {
+                                user.name = method.arguments.name
                                 break
                             }
                         }
@@ -92,20 +92,19 @@ class Client(private val chatViewModel: ChatViewModel) {
                     "change_color" -> {
 
                         for (user in ChatApplication.getInstance().users.value!!) {
-                            if (message.arguments.uuid == user.uuid) {
-                                user.color = message.arguments.color
+                            if (method.arguments.uuid == user.uuid) {
+                                user.color = method.arguments.color
                                 break
                             }
                         }
-
                     }
 
-                    "" -> {
-
+                    "message" -> {
+                        chatViewModel.inputMessage(method)
                     }
 
                     else -> {
-                        chatViewModel.inputMessage(message)
+                        Log.e("TAAAG", "invalid method")
                     }
                 }
                 updateUsersLiveData()
@@ -116,9 +115,9 @@ class Client(private val chatViewModel: ChatViewModel) {
 
     }
 
-    fun sendMessage(message: Message) {
+    fun sendMessage(method: Method) {
         GlobalScope.launch(Dispatchers.IO) {
-            val json = gson.toJson(message)
+            val json = gson.toJson(method)
             outputStream?.write(json)
             outputStream?.flush()
         }

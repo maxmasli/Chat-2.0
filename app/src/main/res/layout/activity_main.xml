@@ -27,8 +27,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/response_message_tab"
         android:layout_width="0dp"
-        android:visibility="gone"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/message_ed">
@@ -44,24 +44,37 @@
 
         <TextView
             android:id="@+id/response_name_tv"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@id/line"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/close_tab_btn"
             tools:text="username" />
 
         <TextView
             android:id="@+id/response_message_tv"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@id/line"
             app:layout_constraintTop_toBottomOf="@id/response_name_tv"
+            app:layout_constraintEnd_toStartOf="@id/close_tab_btn"
             tools:text="ya loh" />
+
+        <ImageButton
+            android:id="@+id/close_tab_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_close_tab_24"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:contentDescription="@string/close_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
